@@ -1,0 +1,52 @@
+body{
+    
+    background-color: lightskyblue;
+}
+
+section {
+    display: flex;
+    flex-direction: column;
+    flex-wrap: wrap;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+    height: 100vh;
+}
+
+#qr-code-div {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    background-color: whitesmoke;
+    width: 18%;
+    height: 50%;
+    border-radius: 10px;
+    
+}
+
+img{
+    width: 90%;
+    height: 61% ;
+    border-radius: 5px  ;
+    margin-top: 5%;
+    
+
+}
+
+div.attribution {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    
+}
+
+h3 {
+    text-align: center;
+    font-weight: bolder;
+    margin: 5% 12% 0% 12%;
+}
+
+p {
+    text-align: center;
+    margin: 5% 12% 5% 12%;
+}
