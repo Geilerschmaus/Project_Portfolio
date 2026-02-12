@@ -1,0 +1,66 @@
+body {
+    margin: 0px;
+    padding: 0px;
+    display: flex;
+    flex-direction: column;
+}
+
+/*Header Section*/
+
+body :first-child {
+    width: 100%;
+}
+
+.header-section {
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+    background-color: bisque;
+    height: 10vh;
+    width: 100vh;
+}
+
+.header-section h1 {
+    width: 70%;
+}
+
+.header-section button {
+    background-color: bisque;
+    border-radius: 10px;
+    height: 60%;
+    width: 5%;
+    font-weight: 800;
+}
+
+.header-section button:hover {
+    border: 3px solid black;
+}
+
+/*Main Section*/
+
+.main-section {
+    display: grid;
+    grid-template-columns: 3fr repeat(6,1fr);
+    grid-template-rows: 1fr;
+    height: 80vh;
+    width: 100%;
+    background-color: rgb(225, 192, 151);
+}
+
+.main-section div img {
+    width: 40%;
+    height: 20%;
+    border-radius: 5px;
+}
+
+#w-today img{
+    width: 40%;
+    height: 40%;
+}
+
+.main-section div {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-around;
+    align-items: center;
+}
