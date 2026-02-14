@@ -5,22 +5,24 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Weather Forecast</title>
-    <link rel="stylesheet" href="style.css">
-    <script src="script.js"></script>
+    <link rel="stylesheet" href="style_home.css">
+    <script src="config.js"></script>
+    <script src="script_home.js"></script>
 </head>
 
 <body>
     <section>
         <div class="header-section">
-            <h1 style="font-weight: 800;">Weather Forecast</h1>
-            <button>Favorite Citys</button>
-            <button>About Me</button>
+            <a id="homeButton" href="index.html">Weather Forecast</a>
+            <a href="favourites.html">Favorite Citys</a>
+            <a href="about.html">About Me</a>
         </div>
 
     </section>
     <section class="main-section">
 
         <div id="w-today">
+            <h1 id="t-City">Stadt</h1>
             <img src="./Bilder_Weather_Forecast/Wien-bild.jpg" alt="Bild von Wien">
             <h1 id="t-temp">Temperature: 10°C</h1>
             <h1 id="t-tempFeelsLike">Fühlt sich an wie</h1>
@@ -73,11 +75,13 @@
 
 
     </section>
-    <section>
+    <section class="footer-section">
+        <div>
+            <p>Made by 
 
-    </section>
-    <section>
-
+                <a href="https://github.com/Geilerschmaus/Project_Portfolio/tree/main/2026-02-11_New_something">The Coder</a>
+            </p>
+        </div>
     </section>
 
 </body>

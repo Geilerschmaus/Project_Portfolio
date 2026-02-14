@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Weather Forecast</title>
+    <link rel="stylesheet" href="style_favourites.css">
+    <script src="script_favourites.js"></script>
+    <script src="config.js"></script>
+    
+</head>
+<body>
+   <section>
+        <div class="header-section">
+            <a id="homeButton" href="index.html">Weather Forecast</a>
+            <a href="favourites.html">Favorite Citys</a>
+            <a href="about.html">About Me</a>
+        </div>
+
+    </section> 
+    <section class="favourites-section">
+        
+        <div>
+            <h1>Add/Delete favourite City</h1>
+            <input type="text" id="newFavouriteCityInput" placeholder="Insert favourite city">
+            <button  onclick="getNewFavouriteCity()">Add new favourite city</button>
+            <input type="text" id="deleteFavouriteCityInput" placeholder="Insert City to delet">
+            <button onclick="deleteFavouriteCity()">Delete favourite city</button>
+            <button onclick="clearAllFavouriteCities()">Clear all favourite cities</button>
+
+        </div>
+
+    </section>
+    <section id="favouriteCitys-section">
+
+    </section>
+    <section class="footer-section">
+        <div>
+            <p>Made by 
+
+                <a href="https://github.com/Geilerschmaus/Project_Portfolio/tree/main/2026-02-11_New_something">The Coder</a>
+            </p>
+        </div>
+    </section>
+
+</body>
+</html>

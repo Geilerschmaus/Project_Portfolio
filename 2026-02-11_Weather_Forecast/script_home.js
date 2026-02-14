@@ -1,6 +1,6 @@
 
-const urlWienHeute = "https://api.openweathermap.org/data/2.5/weather?lat=48.19044082578702&lon=16.340154513565395&appid=0b62ed9ae380b0ff96221d9e5c721fd8&units=metric";
-const urlWienForecast = "https://api.openweathermap.org/data/2.5/forecast?lat=48.19044082578702&lon=16.340154513565395&appid=0b62ed9ae380b0ff96221d9e5c721fd8&units=metric";
+const urlWienHeute = `https://api.openweathermap.org/data/2.5/weather?lat=48.19044082578702&lon=16.340154513565395&appid=${_API_KEY}&units=metric`;
+const urlWienForecast = `https://api.openweathermap.org/data/2.5/forecast?lat=48.19044082578702&lon=16.340154513565395&appid=${_API_KEY}&units=metric`;
 const forecastArray = [];
 
 let data = null;
@@ -66,18 +66,23 @@ function insertTemperatureToday(data){
     description = document.getElementById("t-description");
 
     tempToday.textContent = `Temperature: ${data.main.temp}°C`;
-    tempFeelsLike.textContent = `Fühlt sich an wie: ${data.main.feels_like}°C`;
-    description.textContent = `Wetterbedingung: ${data.weather[0].main}`;
+    tempFeelsLike.textContent = `Feels like: ${data.main.feels_like}°C`;
+    description.textContent = `Weather condition: ${data.weather[0].main}`;
     
 }
 
 function insertWeatherToday(data){
 
     const weatherToday = document.querySelectorAll('#w-type h3');
+    
+    weatherToday[0].textContent = 'Weather conditions today: ' + data.weather[0].main;
+    weatherToday[1].textContent = 'Detailed weather: ' + data.weather[0].description;
+    weatherToday[2].textContent = 'Wind speed: ' + data.wind.speed + ' m/s';
+    
+    const cityName = document.getElementById("t-City");
 
-    weatherToday[0].textContent = 'Wetterbedingungen Heute: ' + data.weather[0].main;
-    weatherToday[1].textContent = 'Wetterbedingungen spezifischer: ' + data.weather[0].description;
-    weatherToday[2].textContent = 'Windgeschwindigkeit: ' + data.wind.speed + ' m/s';
+    cityName.textContent = `City: ${data.name}`;
+
 }
 
 
@@ -131,6 +136,24 @@ function insertPicturesForecast(forecastArray){
 
 }
 
+function insertDateForecast(){
+
+    const forecastDates = document.querySelectorAll('#w-forecast-1 h2, #w-forecast-2 h2, #w-forecast-3 h2, #w-forecast-4 h2, #w-forecast-5 h2');
+
+    for(let day = 1; day <= 5; day++){
+        const datum = new Date();
+        datum.setDate(datum.getDate() + day);
+        const jahr = datum.getFullYear();
+        const monat = String(datum.getMonth() + 1).padStart(2, '0');
+        const tag = String(datum.getDate()).padStart(2, '0');
+        const timeComparer = `${jahr}-${monat}-${tag} 12:00`; // if wanted add 12:00
+
+        forecastDates[day-1].textContent = timeComparer;
+    }
+}
+
+
+
 
 
 document.addEventListener("DOMContentLoaded",async () =>{
@@ -146,7 +169,7 @@ document.addEventListener("DOMContentLoaded",async () =>{
     insertForecastText(forecastArray);
     insertPicturesToday(dataToday);
     insertPicturesForecast(forecastArray);
-    
+    insertDateForecast();
 
 
 })
