@@ -5,6 +5,76 @@ body {
     flex-direction: column;
 }
 
+body.dark-mode {
+    background-color: #1a1a2e;
+    color: #e0e0e0;
+}
+
+body.dark-mode .header-section {
+    background-color: #16213e;
+}
+
+body.dark-mode .header-section a {
+    color: #e0e0e0;
+}
+
+body.dark-mode .information-section {
+    background-color: #1f1f3a;
+}
+
+body.dark-mode .main-section {
+    background-color: #1a1a2e;
+}
+
+body.dark-mode .main-section div h1 {
+    background-color: #2a2a4a;
+    color: #e0e0e0;
+}
+
+body.dark-mode .footer-section {
+    background-color: #16213e;
+}
+
+body.dark-mode .footer-section div p a {
+    color: #e0e0e0;
+}
+
+body.dark-mode #homeButton {
+    color: #e0e0e0;
+}
+
+body.dark-mode #homeButton:hover {
+    background-color: #2a3a5a;
+}
+
+body.dark-mode .header-section a:hover {
+    background-color: #2a3a5a;
+}
+
+body.dark-mode .header-section button {
+    background-color: #2a2a4a;
+    color: #e0e0e0;
+    border-color: #e0e0e0;
+}
+
+body.dark-mode .header-section button:hover {
+    background-color: #3a3a5a;
+}
+
+body.dark-mode .information-section {
+    background-color: #1f1f3a;
+}
+
+body.dark-mode .information-section div button {
+    background-color: #2a2a4a;
+    color: #e0e0e0;
+    border-color: #e0e0e0;
+}
+
+body.dark-mode .information-section div button:hover {
+    background-color: #3a3a5a;
+}
+
 /*Header Section*/
 
 body :first-child {
@@ -47,6 +117,49 @@ body :first-child {
 .header-section a:hover {
     background-color: rgb(197, 158, 111);
     transition: background-color 0.3s ease-in-out;
+}
+
+.header-section button {
+    background-color: rgb(219, 183, 139);
+    border: 1px solid black;
+    padding: 8px 16px;
+    font-size: 0.8em;
+    cursor: pointer;
+    border-radius: 5px;
+}
+
+.header-section button:hover {
+    background-color: rgb(197, 158, 111);
+}
+
+/*Information Section*/
+
+.information-section {
+    height: 10vh;
+    width: 100%;
+    background-color: rgb(241, 210, 171);
+}
+
+.information-section div {
+    display: flex;
+    align-items: center;
+    justify-content: space-around;
+    width: 100%;
+    height: 100%;
+}
+
+.information-section div h1 {
+    height: 100%;
+    width: 70%;
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
+}
+
+.information-section div button {
+    height: 50%;
+    background-color: rgb(219, 183, 139);
+    border: 1px solid black;
 }
 
 /*Main Section*/
@@ -122,3 +235,8 @@ body :first-child {
     color: black;
     font-weight: 800;
 }
+
+.footer-section div p a:hover {
+    text-decoration: underline;
+}
+

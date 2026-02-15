@@ -1,4 +1,6 @@
+
 const favouriteCitys = [];
+
 
 
 function getNewFavouriteCity() {
@@ -63,6 +65,7 @@ function displayFavouriteCitys() {
         const newCityDiv = document.createElement("div");
         const newCityPicture = document.createElement("img");
         const newCityName = document.createElement("h1");
+        const watchCityForecast = document.createElement("a");
         
         switch(city.toLowerCase()) {
             case "vienna":
@@ -84,17 +87,49 @@ function displayFavouriteCitys() {
 
             newCityDiv.classList.add(city.replace(/\s+/g, '-'));
         }
+
+        watchCityForecast.textContent = "Watch Forecast";
+        watchCityForecast.href = "./index.html";
+        watchCityForecast.id = city.replace(/\s+/g, '-');
+        watchCityForecast.classList.add("forecast-link");
+        
         
 
         favouriteCitysSection.appendChild(newCityDiv);
 
         newCityDiv.appendChild(newCityPicture);
         newCityDiv.appendChild(newCityName);
+        newCityDiv.appendChild(watchCityForecast);
 
+        
     });
+
+    saveCityNameLocalStorage();
+    
+}
+
+function saveCityNameLocalStorage() {
+    const watchCityForecast = document.querySelectorAll(".forecast-link");
+
+    watchCityForecast.forEach(city => {
+        city.addEventListener("click",(event) => {
+            
+            event.preventDefault();
+
+            const toSaveCity = city.id;
+            localStorage.setItem("selectedCity", toSaveCity);
+
+            globalThis.location.href = city.href;
+        })
+    })
+    
+
+
 }
 
 document.addEventListener("DOMContentLoaded", () => {
+
+    applyTheme();
 
     const storedFavouriteCitys = localStorage.getItem("favouriteCitys");
 
@@ -104,4 +139,6 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 
     displayFavouriteCitys();
+    saveCityNameLocalStorage();
 })
+

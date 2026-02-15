@@ -1,23 +1,86 @@
 
-const urlWienHeute = `https://api.openweathermap.org/data/2.5/weather?lat=48.19044082578702&lon=16.340154513565395&appid=${_API_KEY}&units=metric`;
-const urlWienForecast = `https://api.openweathermap.org/data/2.5/forecast?lat=48.19044082578702&lon=16.340154513565395&appid=${_API_KEY}&units=metric`;
+let urlToday = null;
+let urlForecast = null;
 const forecastArray = [];
 
-let data = null;
+let weatherDataToday = null;
 let tempToday = null;
 let tempFeelsLike = null;
 let description = null;
 let dataToday = null;
 
+function switchTheme() {
+    const body = document.body;
+    body.classList.toggle("dark-mode");
+    
+    const isDark = body.classList.contains("dark-mode");
+    localStorage.setItem("theme", isDark ? "dark" : "light");
+}
 
+function applyTheme() {
+    const savedTheme = localStorage.getItem("theme");
+    if (savedTheme === "dark") {
+        document.body.classList.add("dark-mode");
+    }
+}
 
+async function findCoordinates() {
+    
+    const cityName = localStorage.getItem("selectedCity");
+    if (!cityName) return null;
+    
+    const geocodingUrl = `https://api.openweathermap.org/geo/1.0/direct?q=${cityName}&limit=1&appid=${_API_KEY}`;
+    
+    const response = await fetch(geocodingUrl);
+    const geocodingdata = await response.json();
+    
+    if (!geocodingdata || geocodingdata.length === 0) return null;
+    
+    const LAT = geocodingdata[0].lat;
+    const LON = geocodingdata[0].lon;
+    
+    const usedUnit = localStorage.getItem("usedUnit") || "metric";
+    urlToday = `https://api.openweathermap.org/data/2.5/weather?lat=${LAT}&lon=${LON}&appid=${_API_KEY}&units=${usedUnit}`;
+    urlForecast = `https://api.openweathermap.org/data/2.5/forecast?lat=${LAT}&lon=${LON}&appid=${_API_KEY}&units=${usedUnit}`;
+    
+}
+
+function updateTime() {
+    
+    const timeTextfield = document.getElementById("t-timeUpdated")
+    
+    const datum = new Date();
+    datum.setDate(datum.getDate());
+    
+    const stunden = String(datum.getHours()).padStart(2, "0");
+    const minuten = String(datum.getMinutes()).padStart(2, "0");
+    const sekunden = String(datum.getSeconds()).padStart(2, "0");
+    
+    const timeNow = ` ${stunden}:${minuten}:${sekunden}`;
+    
+    timeTextfield.textContent = `Last updated: ${timeNow}`
+    
+}
+
+function switchUnits() {
+    
+    let usedUnit = localStorage.getItem("usedUnit") || "metric";
+    
+    if(usedUnit === "metric"){
+        usedUnit = "imperial";
+    }
+    else if(usedUnit === "imperial"){
+        usedUnit = "metric";
+    }
+    
+    localStorage.setItem("usedUnit", usedUnit);
+
+}
 
 async function getWeatherToday(urlToday){
     const response = await fetch(urlToday);
-    data = await response.json();
-    console.log('API Response:', data); 
-    console.log('tempToday element:', tempToday);
-    return data;
+    weatherDataToday = await response.json();
+    return weatherDataToday;
     
 }
 
@@ -38,10 +101,13 @@ async function getWeatherForecast(urlForecast){
         const matchingForecast = forecastData.list.find(item => item.dt_txt === timeComparer);
         
         if(matchingForecast){
-            forecastArray.push(`Temperature: ${matchingForecast.main.temp}°C`);
-            forecastArray.push(`Feels like: ${matchingForecast.main.feels_like}°C`);
+            const unit = localStorage.getItem("usedUnit") || "metric";
+            const tempUnit = unit === "metric" ? "°C" : "°F";
+            forecastArray.push(`Temperature: ${matchingForecast.main.temp}${tempUnit}`);
+            forecastArray.push(`Feels like: ${matchingForecast.main.feels_like}${tempUnit}`);
             forecastArray.push(`Weather type: ${matchingForecast.weather[0].main}`);
-        } else {
+        }
+        else{
             forecastArray.push('Temperature: N/A');
             forecastArray.push('Feels like: N/A');
             forecastArray.push('Weather type: N/A');
@@ -52,6 +118,7 @@ async function getWeatherForecast(urlForecast){
 function insertForecastText(forecastArray) {
 
     const textInsertForecast = document.querySelectorAll('#w-forecast-1, #w-forecast-2, #w-forecast-3, #w-forecast-4, #w-forecast-5');
+    if (!textInsertForecast || textInsertForecast.length === 0) return;
     for(let divCounter = 0; divCounter < textInsertForecast.length; divCounter++){
         for(let h3Counter = 0; h3Counter < 3; h3Counter++){
             textInsertForecast[divCounter].querySelectorAll('h3')[h3Counter].textContent = forecastArray[divCounter * 3 + h3Counter];
@@ -59,37 +126,53 @@ function insertForecastText(forecastArray) {
     }
 }
 
-function insertTemperatureToday(data){
-    
-    tempToday = document.getElementById("t-temp");
-    tempFeelsLike = document.getElementById("t-tempFeelsLike");
-    description = document.getElementById("t-description");
+function insertTemperatureToday(weatherDataToday){
 
-    tempToday.textContent = `Temperature: ${data.main.temp}°C`;
-    tempFeelsLike.textContent = `Feels like: ${data.main.feels_like}°C`;
-    description.textContent = `Weather condition: ${data.weather[0].main}`;
+    if (!weatherDataToday || !weatherDataToday.main) return;
+
+    const tempTodayEl = document.getElementById("t-temp");
+    const tempFeelsLikeEl = document.getElementById("t-tempFeelsLike");
+    const descriptionEl = document.getElementById("t-description");
+    const cityNameTextfield = document.getElementById("t-City");
     
+    if (!tempTodayEl || !tempFeelsLikeEl || !descriptionEl || !cityNameTextfield) return;
+
+    const cityName = localStorage.getItem("selectedCity");
+
+    const unit = localStorage.getItem("usedUnit") || "metric";
+    const tempUnit = unit === "metric" ? "°C" : "°F";
+
+    tempTodayEl.textContent = `Temperature: ${weatherDataToday.main.temp}${tempUnit}`;
+    tempFeelsLikeEl.textContent = `Feels like: ${weatherDataToday.main.feels_like}${tempUnit}`;
+    descriptionEl.textContent = `Weather condition: ${weatherDataToday.weather[0].main}`;
+    
+    
+    cityNameTextfield.textContent = `City: ${cityName}`;
 }
 
-function insertWeatherToday(data){
+function insertWeatherToday(weatherDataToday){
+
+    if (!weatherDataToday || !weatherDataToday.weather) return;
 
     const weatherToday = document.querySelectorAll('#w-type h3');
+    if (!weatherToday || weatherToday.length < 3) return;
     
-    weatherToday[0].textContent = 'Weather conditions today: ' + data.weather[0].main;
-    weatherToday[1].textContent = 'Detailed weather: ' + data.weather[0].description;
-    weatherToday[2].textContent = 'Wind speed: ' + data.wind.speed + ' m/s';
+    weatherToday[0].textContent = 'Weather conditions today: ' + weatherDataToday.weather[0].main;
+    weatherToday[1].textContent = 'Detailed weather: ' + weatherDataToday.weather[0].description;
+    weatherToday[2].textContent = 'Wind speed: ' + weatherDataToday.wind.speed + ' m/s';
     
-    const cityName = document.getElementById("t-City");
-
-    cityName.textContent = `City: ${data.name}`;
 
 }
 
 
-function insertPicturesToday(data){
+function insertPicturesToday(weatherDataToday){
+
+    if (!weatherDataToday || !weatherDataToday.weather) return;
 
     const imgWeather = document.querySelectorAll('#w-type img')
-    const weatherType = data.weather[0].main;
+    if (!imgWeather || imgWeather.length === 0) return;
+    
+    const weatherType = weatherDataToday.weather[0].main;
 
     switch(weatherType){
         case "Rain" : 
@@ -111,6 +194,7 @@ function insertPicturesToday(data){
 function insertPicturesForecast(forecastArray){
     
     const imgForecast = document.querySelectorAll('#w-forecast-1 img, #w-forecast-2 img, #w-forecast-3 img, #w-forecast-4 img, #w-forecast-5 img');
+    if (!imgForecast || imgForecast.length === 0) return;
     
     for(let i = 0; i < 5; i++){
         const weatherType = forecastArray[i * 3 + 2].split(': ')[1];
@@ -139,6 +223,7 @@ function insertPicturesForecast(forecastArray){
 function insertDateForecast(){
 
     const forecastDates = document.querySelectorAll('#w-forecast-1 h2, #w-forecast-2 h2, #w-forecast-3 h2, #w-forecast-4 h2, #w-forecast-5 h2');
+    if (!forecastDates || forecastDates.length === 0) return;
 
     for(let day = 1; day <= 5; day++){
         const datum = new Date();
@@ -146,23 +231,29 @@ function insertDateForecast(){
         const jahr = datum.getFullYear();
         const monat = String(datum.getMonth() + 1).padStart(2, '0');
         const tag = String(datum.getDate()).padStart(2, '0');
-        const timeComparer = `${jahr}-${monat}-${tag} 12:00`; // if wanted add 12:00
+        const timeComparer = `${jahr}-${monat}-${tag} 12:00`;
 
         forecastDates[day-1].textContent = timeComparer;
     }
 }
 
 
-
-
-
 document.addEventListener("DOMContentLoaded",async () =>{
+    
+    applyTheme();
+    
+    const isHomePage = document.getElementById("w-today") !== null;
+    if (!isHomePage) return;
+    
+    const unitsSwitchButton = document.getElementById("unitsSwitchButton");
+    
+    const coords = await findCoordinates();
+    if (!coords && !urlToday) return;
+    
+    await getWeatherForecast(urlForecast);
+    dataToday = await getWeatherToday(urlToday);
 
-
-        
-    await getWeatherForecast(urlWienForecast);
-    dataToday = await getWeatherToday(urlWienHeute);
-
+    if (!dataToday) return;
 
     insertWeatherToday(dataToday);
     insertTemperatureToday(dataToday);
@@ -170,6 +261,48 @@ document.addEventListener("DOMContentLoaded",async () =>{
     insertPicturesToday(dataToday);
     insertPicturesForecast(forecastArray);
     insertDateForecast();
+    updateTime();
 
+    if (unitsSwitchButton) {
+        unitsSwitchButton.addEventListener("click", async () => {
+
+            switchUnits();
+
+            await findCoordinates();
+            if (!urlToday) return;
+
+            await getWeatherForecast(urlForecast);
+            dataToday = await getWeatherToday(urlToday);
+            
+            if (!dataToday) return;
+        
+            insertWeatherToday(dataToday);
+            insertTemperatureToday(dataToday);
+            insertForecastText(forecastArray);
+            insertPicturesToday(dataToday);
+            insertPicturesForecast(forecastArray);
+            insertDateForecast();
+            updateTime();
+        });
+    }
 
 })
+
+
+setInterval(async () => {
+
+    if (!urlToday || !urlForecast) return;
+
+    await findCoordinates();
+    await getWeatherForecast(urlForecast);
+    dataToday = await getWeatherToday(urlToday);
+
+    insertWeatherToday(dataToday);
+    insertTemperatureToday(dataToday);
+    insertForecastText(forecastArray);
+    insertPicturesToday(dataToday);
+    insertPicturesForecast(forecastArray);
+    insertDateForecast();
+    updateTime();
+
+}, 300000);
