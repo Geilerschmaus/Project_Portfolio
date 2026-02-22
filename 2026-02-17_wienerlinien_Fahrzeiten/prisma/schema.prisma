@@ -1,0 +1,30 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+}
+
+model Station {
+  id         Int         @id @default(autoincrement())
+  rbl        Int         @unique
+  name       String
+  departures Departure[]
+  updatedAt  DateTime    @updatedAt
+}
+
+model Departure {
+  id              Int        @id @default(autoincrement())
+  line            String
+  destination     String
+  expectedArrival DateTime   // scheduled, on-minute precision
+  actualArrival   DateTime?  // nullable, updated later
+  delayMinutes    Int?       // nullable, computed as actual - expected
+  createdAt       DateTime   @default(now()) // insertion time, rounded
+  station         Station    @relation(fields: [stationId], references: [id])
+  stationId       Int
+}
