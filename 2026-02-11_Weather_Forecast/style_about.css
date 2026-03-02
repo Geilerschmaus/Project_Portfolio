@@ -1,0 +1,148 @@
+body {
+    margin: 0px;
+    padding: 0px;
+    display: flex;
+    flex-direction: column;
+}
+
+body.dark-mode {
+    background-color: #1a1a2e;
+    color: #e0e0e0;
+}
+
+
+/*Header Section*/
+
+.header-section {
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+    background-color: bisque;
+    height: 10vh;
+    width: 100%;
+}
+
+#homeButton {
+    display: flex;
+    width: 60%;
+    height: 100%;
+    align-items: center;
+    justify-content: flex-start;
+    font-size: 3em;
+    font-weight: 900;
+    text-decoration: none;
+    color: black;
+}
+
+.header-section a {
+    display: flex;
+    width: 20%;
+    height: 100%;
+    align-items: center;
+    justify-content: flex-start;
+    font-size: 3em;
+    font-weight: 900;
+    text-decoration: none;
+    color: black;
+}
+
+.header-section a:hover {
+    background-color: rgb(197, 158, 111);
+    transition: background-color 0.3s ease-in-out;
+}
+
+#themeSwitchButton {
+    background-color: rgb(219, 183, 139);
+    border: 1px solid black;
+    padding: 8px 16px;
+    font-size: 0.8em;
+    cursor: pointer;
+    border-radius: 5px;
+}
+
+#themeSwitchButton:hover {
+    background-color: rgb(197, 158, 111);
+}
+
+body.dark-mode .header-section {
+    background-color: #16213e;
+}
+
+body.dark-mode .header-section a {
+    color: #e0e0e0;
+}
+
+body.dark-mode .header-section a:hover {
+    background-color: #2a3a5a;
+}
+
+body.dark-mode #themeSwitchButton {
+    background-color: #2a2a4a;
+    color: #e0e0e0;
+    border-color: #e0e0e0;
+}
+
+body.dark-mode #themeSwitchButton:hover {
+    background-color: #3a3a5a;
+}
+
+body.dark-mode #homeButton {
+    color: #e0e0e0;
+}
+
+/*about-section*/
+
+.about-section {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 80vh;
+    width: 100%;
+    background-color: rgb(241, 210, 171);
+}
+
+body.dark-mode .about-section {
+    background-color: #1f1f3a;
+}
+
+/*Footer Section*/
+
+.footer-section {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background-color: bisque;
+    height: 10vh;
+    width: 100%;
+}
+
+.footer-section div{
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 100%;
+    width: 100%;
+}
+
+.footer-section div p {
+    text-align: center;
+    margin: 0;
+}
+
+.footer-section div p a {
+    text-decoration: none;
+    color: black;
+    font-weight: 800;
+}
+
+.footer-section div p a:hover {
+    text-decoration: underline;
+}
+
+body.dark-mode .footer-section {
+    background-color: #16213e;
+}
+
+body.dark-mode .footer-section div p a {
+    color: #e0e0e0;
+}

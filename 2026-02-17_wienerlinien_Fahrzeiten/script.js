@@ -1,8 +1,6 @@
-import axios from 'https://cdn.skypack.dev/axios';
-
 const rbls = [4415, 4422, 4611, 4618];
 let apiCallCount = 0;
-
+        
 function getProxyUrl() {
     apiCallCount++;
     const timestamp = Date.now();
@@ -38,7 +36,6 @@ function displayDepartures(departures, saveResults = []) {
         return;
     }
     
-    // Group departures by RBL
     const grouped = {};
     for (const dep of departures) {
         const key = dep.stationRbl;
@@ -52,7 +49,6 @@ function displayDepartures(departures, saveResults = []) {
         grouped[key].departures.push(dep);
     }
     
-    // Create columns for each RBL
     const columnsContainer = document.createElement('div');
     columnsContainer.className = 'columns-container';
     
@@ -110,12 +106,15 @@ function setStatus(message, type) {
 
 async function getStationByRbl(rbl) {
     try {
-        const response = await axios.get(`${BACKEND_URL}/api/stations/rbl/${rbl}`);
-        return response.data;
-    } catch (error) {
-        if (error.response?.status === 404) {
+        const response = await fetch(`${BACKEND_URL}/api/stations/rbl/${rbl}`);
+        if (response.status === 404) {
             return null;
         }
+        if (!response.ok) {
+            throw new Error(`HTTP ${response.status}`);
+        }
+        return response.json();
+    } catch (error) {
         throw error;
     }
 }
@@ -128,15 +127,24 @@ async function saveDepartureToDb(departure) {
     }
     
     try {
-        const response = await axios.post(`${BACKEND_URL}/api/departures`, {
-            line: departure.line,
-            destination: departure.destination,
-            stationId: station.id,
-            expectedArrival: departure.expectedArrival
+        const response = await fetch(`${BACKEND_URL}/api/departures`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+                line: departure.line,
+                destination: departure.destination,
+                stationId: station.id,
+                expectedArrival: departure.expectedArrival
+            })
         });
-        return { success: true, data: response.data };
+        if (!response.ok) {
+            const errData = await response.json();
+            return { success: false, error: errData.error || `HTTP ${response.status}` };
+        }
+        const data = await response.json();
+        return { success: true, data };
     } catch (error) {
-        return { success: false, error: error.response?.data?.error || error.message };
+        return { success: false, error: error.message };
     }
 }
 
@@ -212,23 +220,22 @@ async function getDepartures() {
     updateCurrentTime();
     setStatus('Lädt...', '');
     try {
-        const response = await axios.get(getProxyUrl());
+        const response = await fetch(getProxyUrl());
+        const data = await response.json();
         
-        if (response.data && response.data.data) {
-            const departures = parseApiResponse(response.data);
+        if (data && data.data) {
+            const departures = parseApiResponse(data);
             console.log('Parsed departures:', departures);
             displayDepartures(departures);
             setStatus(`${departures.length} Abfahrten geladen`, 'success');
             
-            // Auto-save to database
             const saveResults = await saveAllDepartures(departures);
             
-            // Update display with save status
             displayDepartures(departures, saveResults);
             
             return departures;
         } else {
-            console.error('Datenstruktur der Wiener Linien unvollständig', response.data);
+            console.error('Datenstruktur der Wiener Linien unvollständig', data);
             setStatus('Fehler: Datenstruktur unvollständig', 'error');
             return [];
         }

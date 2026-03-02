@@ -7,7 +7,9 @@ generator client {
 
 datasource db {
   provider = "sqlite"
+  url      = "file:./dev.db"
 }
+
 
 model Station {
   id         Int         @id @default(autoincrement())
@@ -27,4 +29,7 @@ model Departure {
   createdAt       DateTime   @default(now()) // insertion time, rounded
   station         Station    @relation(fields: [stationId], references: [id])
   stationId       Int
+
+  @@unique([line, stationId, expectedArrival])
 }
+
