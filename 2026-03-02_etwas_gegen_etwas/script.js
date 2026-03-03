@@ -15,6 +15,7 @@ class Game {
         this.setupEventListeners();
         this.updateSunDisplay();
         this.setupButtonListeners();
+        this.placePlant();
     }
     
     createGrid() {
@@ -53,7 +54,34 @@ class Game {
             return;
         }
         
-        console.log(`Place ${this.selectedPlant} at row ${row}, col ${col}`);
+        const plantTypes = {
+            'peashooter': Peashooter,      
+            'sunflower': Sunflower,
+            'wallnut': Wallnut,
+            'cherry bomb': Cherry,
+            'potato mine': Potato
+        }
+
+        const plantClass = plantTypes[this.selectedPlant];
+        const cost = new plantClass(row,col).cost;
+
+        if(cost > this.sun){
+            console.log("not enough sun");
+            return;
+        }
+
+        if(this.cells[row][col].hasChildNodes()){
+            console.log("Cant place Plant on existing Plant")
+            return;
+        }
+
+        this.sun = this.sun - cost;
+        const plant = new plantClass(row,col);
+        this.plants.push(plant);
+
+        this.cells[row][col].textContent = plant.display;
+        this.cells[row][col].style.backgroundColor = plant.color
+        //console.log(`Place ${this.selectedPlant} at row ${row}, col ${col}`);
     }
     
     updateSunDisplay() {
