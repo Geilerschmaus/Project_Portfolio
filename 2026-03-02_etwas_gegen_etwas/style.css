@@ -20,7 +20,7 @@ body {
     width: 100%;
     height: 80vh;
     align-items: center;
-    justify-content: center;
+    justify-content: space-between;
     background-color: rgb(7, 64, 100);
     flex-direction: column;
 }
@@ -30,7 +30,7 @@ body {
     display: grid;
     grid-template-columns: repeat(9,1fr);
     grid-template-rows: 100%;
-    height: 20%;
+    height: 19%;
     width: 95%;
     gap: 3px;
 
@@ -68,9 +68,23 @@ body {
     grid-template-rows: repeat(5,1fr);
     height: 80%;
     width: 95%;
-    background-color: rgb(53, 100, 7);
-    
+    background: 
+    repeating-linear-gradient(
+        45deg,
+        #4a7c23,
+        #4a7c23 10px,
+        #3d6b1c 10px,
+        #3d6b1c 20px
+    ),
+    linear-gradient(to bottom, #3d6b1c, #2d520f);
+    border: 2px black solid;
+
 }
+
+.gameplay-section * {
+    border: 1px black solid;
+}
+
 /*footer section*/
 .footer-section {
     display: flex;
