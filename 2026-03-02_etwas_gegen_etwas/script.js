@@ -5,12 +5,26 @@ class Game {
         this.cells = [];  
         this.selectedPlant = null;
         this.sun = 300; 
-        this.plants = [];  
+        this.plants = []; 
+        this.removeMode = false; 
         
         this.init();
     }
     
     init() {
+
+        const style = document.createElement('style');
+
+        style.textContent = `
+            @keyframes pulse {
+                0% { transform: scale(1); }
+                50% { transform: scale(1.1); }
+                100% { transform: scale(1); }
+            }
+            .pulsate { animation: pulse 0.5s infinite; }`;
+
+        document.head.appendChild(style);
+
         this.createGrid();
         this.setupEventListeners();
         this.updateSunDisplay();
@@ -47,7 +61,16 @@ class Game {
             const row = parseInt(cell.dataset.row);
             const col = parseInt(cell.dataset.col);
             
-            this.placePlant(row, col);
+            if(this.removeMode == true){
+                this.removePlant(row,col);
+                
+            }
+            else{
+                
+                
+                this.placePlant(row, col);
+                
+            }
         });
     }
     
@@ -84,9 +107,21 @@ class Game {
 
         this.cells[row][col].textContent = plant.display;
         this.cells[row][col].style.backgroundColor = plant.color
+        this.updateSunDisplay();
         //console.log(`Place ${this.selectedPlant} at row ${row}, col ${col}`);
     }
     
+    removePlant(row,col){
+        const plantPlace = this.plants.findIndex(f => f.row === row && f.col === col);
+        if(plantPlace !== -1){
+
+            this.plants.splice(plantPlace,1);
+            this.cells[row][col].textContent = "";
+            this.cells[row][col].style.backgroundColor = "";
+        }
+
+    }
+
     updateSunDisplay() {
         document.getElementById('sunflowerCounter').textContent = `Sunflower counter: ${this.sun}`;
     }
@@ -95,6 +130,24 @@ class Game {
         const buttons = document.querySelectorAll('.plantbar-section button')
 
         buttons.forEach(button => {
+
+            if(button.id == "shovel"){
+
+                button.addEventListener('click', () => {
+
+                    if(this.removeMode == true){
+                        this.removeMode = false;
+                        document.getElementById("shovel").classList.remove("pulsate");
+                    }
+
+                    else{
+                        this.removeMode = true;
+                        document.getElementById("shovel").classList.add("pulsate");
+                    }
+                })
+                return;
+            }
+
             button.addEventListener('click', () => {
                 this.selectedPlant = button.textContent;
                 console.log(this.selectedPlant);
