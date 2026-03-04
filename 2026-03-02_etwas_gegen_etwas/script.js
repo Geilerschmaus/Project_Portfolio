@@ -15,7 +15,10 @@ class Game {
         this.setupEventListeners();
         this.updateSunDisplay();
         this.setupButtonListeners();
-        this.placePlant();
+
+        setInterval(() => {
+            this.gameLoop();
+        },100);
     }
     
     createGrid() {
@@ -98,6 +101,16 @@ class Game {
             })
         });
     }
+
+    gameLoop(){
+        this.plants.forEach(plant => {
+
+            plant.tick(this);
+
+        })
+
+        
+    }
 }
 
 class Plant{
@@ -108,6 +121,10 @@ class Plant{
         this.row = row;
         this.col = col;
         this.type = type;
+    }
+
+    tick(game){
+
     }
 
 }
@@ -131,7 +148,18 @@ class Sunflower extends Plant{
         this.cost = 50;
         this.color = "yellow";
         this.display = "🌻"
+        this.actionInterval = 5000;
+        this.lastAction = new Date();
 
+    }
+
+    tick(game){
+        const now = new Date();
+        if(now - this.lastAction >= this.actionInterval){
+            game.sun += 25;
+            game.updateSunDisplay();
+            this.lastAction = now;
+        }
     }
 
 }
