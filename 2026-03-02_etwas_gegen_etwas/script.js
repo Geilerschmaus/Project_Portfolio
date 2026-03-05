@@ -6,6 +6,10 @@ class Game {
         this.selectedPlant = null;
         this.sun = 300; 
         this.plants = []; 
+        this.zombies = [];
+        this.lastZombieSpawn = new Date();
+        this.zombieSpawnIntervall = 3000;
+        this.projectiles = [];
         this.removeMode = false; 
         
         this.init();
@@ -162,6 +166,18 @@ class Game {
 
         })
 
+        const now = new Date();
+        if(now - this.lastZombieSpawn >= this.zombieSpawnIntervall){
+
+            Zombie.spawnZombie(this);
+            this.lastZombieSpawn = now;
+        }
+
+        this.zombies.forEach(zombie => {
+            
+            zombie.tick(this);
+        })
+
         
     }
 }
@@ -192,6 +208,21 @@ class Peashooter extends Plant{
 
     }
 
+    
+
+}
+
+class Pea{
+
+    constructor(row,col,game){
+        this.row = row;
+        this.col = col;
+        this.speed = 0.1;
+        this.damage = 10;
+
+    }
+
+    
 }
 
 class Sunflower extends Plant{
@@ -246,6 +277,45 @@ class Potato extends Plant{
         this.cost = 150;
         this.color = "darkgoldenrod";
         this.display = " 🥔"
+    }
+
+}
+
+class Zombie{
+
+    constructor(row,col){
+        this.row = row;
+        this.col = col;
+        this.health = 50;
+        this.speed = 0.1;
+        this.lastSpawn = new Date();
+        this.spawnTime = 3000;
+        this.movementAccumulator = 0;
+    }
+    
+    static spawnZombie(game){
+        const row = Math.trunc(Math.random() * game.rows);
+        game.zombies.push(new Zombie(row,8));
+    }
+
+    tick(game){
+
+        this.movementAccumulator += this.speed;
+
+        if(this.movementAccumulator >= 1){
+
+            const oldCol = this.col;
+            this.col -= 1;
+            this.movementAccumulator = 0;
+            if(this.col !== oldCol && oldCol >= 0){
+                game.cells[this.row][oldCol].textContent = "";
+    
+            }
+            if(this.col >= 0){
+                game.cells[this.row][this.col].textContent = "🧟";
+            }
+        }
+
     }
 
 }
