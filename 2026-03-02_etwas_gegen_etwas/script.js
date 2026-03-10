@@ -100,7 +100,7 @@ class Game {
             return;
         }
 
-        if(this.cells[row][col].hasChildNodes()){
+        if(this.cells[row][col].querySelector(".plant")){
             console.log("Cant place Plant on existing Plant")
             return;
         }
@@ -181,11 +181,15 @@ class Game {
             zombie.tick(this);
         })
 
-        const toRemovezombies = this.zombies.filter(zombie => zombie.col < 0);
-        
-        this.zombies = this.zombies.filter(zombie => zombie.col >= 0);
+         this.zombies = this.zombies.filter(zombie => zombie.col >= 0);
 
-        
+        this.projectiles.forEach(proj => {
+
+            proj.tick(this);
+        })
+
+        this.projectiles = this.projectiles.filter(proj => proj.col <= 8);
+
     }
 }
 
@@ -212,11 +216,30 @@ class Plant{
 class Peashooter extends Plant{
 
     constructor(row,col){
-        super(row,col,"peashooter","🟢","lightgreen")
+        super(row,col,"peashooter","🔫","lightgreen")
         this.cost = 100;
+        this.actionInterval = 800;
+        this.lastAction = new Date();
     }
 
-    
+    tick(game){
+
+        const now = new Date();
+
+        if(now - this.lastAction >= this.actionInterval){
+
+            const zombieInLane = game.zombies.some(zombie => zombie.row === this.row && zombie.col > this.col)
+
+            if(zombieInLane){
+
+                const pea = new Pea(this.row , this.col, game);
+                game.projectiles.push(pea);
+                this.lastAction = now;
+
+            }
+        }
+
+    }
 
 }
 
@@ -225,9 +248,37 @@ class Pea{
     constructor(row,col,game){
         this.row = row;
         this.col = col;
-        this.speed = 0.1;
+        this.speed = 0.5;
         this.damage = 10;
+        this.movementAccumulator = 0;
+        this.element = document.createElement("div");
+        this.element.textContent = "🟢";
+        this.element.classList.add("pea");
 
+        game.cells[this.row][this.col].appendChild(this.element);
+
+    }
+
+    tick(game){
+
+        this.movementAccumulator += this.speed;
+
+        if(this.movementAccumulator >= 1){
+            
+            this.col += 1;  
+
+            if(this.col > 8){
+                this.element.remove();
+                this.col = 9;
+            }
+            else{
+
+                game.cells[this.row][this.col].appendChild(this.element);
+                this.movementAccumulator = 0;
+            }
+        }
+        
+        
     }
 
     
