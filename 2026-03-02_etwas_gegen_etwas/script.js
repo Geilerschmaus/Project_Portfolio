@@ -175,20 +175,21 @@ class Game {
             Zombie.spawnZombie(this);
             this.lastZombieSpawn = now;
         }
-
-        this.zombies.forEach(zombie => {
-            
-            zombie.tick(this);
-        })
-
-         this.zombies = this.zombies.filter(zombie => zombie.col >= 0);
-
+        
         this.projectiles.forEach(proj => {
 
             proj.tick(this);
         })
 
         this.projectiles = this.projectiles.filter(proj => proj.col <= 8);
+
+        this.zombies.forEach(zombie => {
+            
+            zombie.tick(this);
+        })
+
+         this.zombies = this.zombies.filter(zombie => zombie.col >= 0 && zombie.health > 0);
+
 
     }
 }
@@ -216,7 +217,7 @@ class Plant{
 class Peashooter extends Plant{
 
     constructor(row,col){
-        super(row,col,"peashooter","🔫","lightgreen")
+        super(row,col,"peashooter","🔫","darkgreen")
         this.cost = 100;
         this.actionInterval = 800;
         this.lastAction = new Date();
@@ -276,6 +277,15 @@ class Pea{
                 game.cells[this.row][this.col].appendChild(this.element);
                 this.movementAccumulator = 0;
             }
+        }
+
+        const zombieToHit = game.zombies.find(zombie => zombie.row === this.row &&  Math.abs(zombie.col-this.col) < 1);
+
+        if(zombieToHit){
+
+            zombieToHit.health -= this.damage;
+            this.element.remove();
+            this.col = 9;
         }
         
         
@@ -371,6 +381,9 @@ class Zombie{
             }
         }
         
+        if(this.health <= 0){
+            this.element.remove();
+        }
 
     }
 
