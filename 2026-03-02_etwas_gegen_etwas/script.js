@@ -350,7 +350,7 @@ class Zombie{
         this.col = col;
         this.health = 50;
         this.speed = 0.05;
-        this.damage = 25;
+        this.damage = 2.5;
         this.lastSpawn = new Date();
         this.spawnTime = 100;
         this.movementAccumulator = 0;
@@ -389,7 +389,7 @@ class Zombie{
             this.element.remove();
         }
 
-        const plantToEat = game.plants.find(plant => plant.row === this.row && Math.abs(plant.col - this.col) < 1);
+        const plantToEat = game.plants.find(plant => plant.row === this.row &&  Math.abs(this.col - (plant.col + 1)) < 0.5);
 
         if(plantToEat){
 
@@ -405,7 +405,7 @@ class Zombie{
                 plantToEat.col = -1;
     
             }
-            
+
         }
 
     }
