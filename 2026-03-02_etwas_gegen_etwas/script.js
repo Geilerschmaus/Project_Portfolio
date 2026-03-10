@@ -108,20 +108,23 @@ class Game {
         this.sun = this.sun - cost;
         const plant = new plantClass(row,col);
         this.plants.push(plant);
+        
+        this.cells[row][col].appendChild(plant.element);
 
-        this.cells[row][col].textContent = plant.display;
-        this.cells[row][col].style.backgroundColor = plant.color
+        
         this.updateSunDisplay();
         //console.log(`Place ${this.selectedPlant} at row ${row}, col ${col}`);
     }
     
     removePlant(row,col){
+
         const plantPlace = this.plants.findIndex(f => f.row === row && f.col === col);
         if(plantPlace !== -1){
 
+            const plant = this.plants[plantPlace];
+            plant.element.remove();
             this.plants.splice(plantPlace,1);
-            this.cells[row][col].textContent = "";
-            this.cells[row][col].style.backgroundColor = "";
+
         }
 
     }
@@ -178,18 +181,26 @@ class Game {
             zombie.tick(this);
         })
 
+        const toRemovezombies = this.zombies.filter(zombie => zombie.col < 0);
+        
+        this.zombies = this.zombies.filter(zombie => zombie.col >= 0);
+
         
     }
 }
 
 class Plant{
 
-    constructor(row,col,type){
+    constructor(row,col,type,emoji,color){
         this.health = 100;
         this.cost = 50;
         this.row = row;
         this.col = col;
         this.type = type;
+        this.element = document.createElement('div');
+        this.element.classList.add('plant');
+        this.element.textContent = emoji;
+        this.element.style.backgroundColor = color;
     }
 
     tick(game){
@@ -201,11 +212,8 @@ class Plant{
 class Peashooter extends Plant{
 
     constructor(row,col){
-        super(row,col,"peashooter")
+        super(row,col,"peashooter","🟢","lightgreen")
         this.cost = 100;
-        this.color = "lightgreen";
-        this.display = "🟢"
-
     }
 
     
@@ -227,14 +235,11 @@ class Pea{
 
 class Sunflower extends Plant{
 
-    constructor(row,col){
-        super(row,col,"sunflower")
+constructor(row, col) {
+        super(row, col, "sunflower", "🌻", "yellow");
         this.cost = 50;
-        this.color = "yellow";
-        this.display = "🌻"
         this.actionInterval = 5000;
         this.lastAction = new Date();
-
     }
 
     tick(game){
@@ -250,33 +255,27 @@ class Sunflower extends Plant{
 
 class Wallnut extends Plant{
 
-    constructor(row,col){
-        super(row,col,"wallnut")
+    constructor(row, col) {
+        super(row, col, "wallnut", "🥜", "bisque");
         this.cost = 50;
-        this.color = "bisque";
-        this.display = "🥜"
     }
 
 }
 
 class Cherry extends Plant{
 
-    constructor(row,col){
-        super(row,col,"cherry")
+    constructor(row, col) {
+        super(row, col, "cherry", "🍒", "crimson");
         this.cost = 150;
-        this.color = "crimson";
-        this.display = "🍒"
     }
 
 }
 
 class Potato extends Plant{
 
-    constructor(row,col){
-        super(row,col,"potato")
+    constructor(row, col) {
+        super(row, col, "potato", "🥔", "darkgoldenrod");
         this.cost = 150;
-        this.color = "darkgoldenrod";
-        this.display = " 🥔"
     }
 
 }
@@ -287,15 +286,20 @@ class Zombie{
         this.row = row;
         this.col = col;
         this.health = 50;
-        this.speed = 0.1;
+        this.speed = 0.05;
         this.lastSpawn = new Date();
-        this.spawnTime = 3000;
+        this.spawnTime = 100;
         this.movementAccumulator = 0;
+        this.element = document.createElement('div');
+        this.element.classList.add('zombie');
+        this.element.textContent = "🧟";
     }
     
     static spawnZombie(game){
         const row = Math.trunc(Math.random() * game.rows);
-        game.zombies.push(new Zombie(row,8));
+        const zombie = new Zombie(row,8)
+        game.zombies.push(zombie);
+        game.cells[row][8].appendChild(zombie.element);
     }
 
     tick(game){
@@ -303,18 +307,19 @@ class Zombie{
         this.movementAccumulator += this.speed;
 
         if(this.movementAccumulator >= 1){
+            
+            this.col -= 1;  
 
-            const oldCol = this.col;
-            this.col -= 1;
-            this.movementAccumulator = 0;
-            if(this.col !== oldCol && oldCol >= 0){
-                game.cells[this.row][oldCol].textContent = "";
-    
+            if(this.col < 0){
+                this.element.remove();
             }
-            if(this.col >= 0){
-                game.cells[this.row][this.col].textContent = "🧟";
+            else{
+
+                game.cells[this.row][this.col].appendChild(this.element);
+                this.movementAccumulator = 0;
             }
         }
+        
 
     }
 
