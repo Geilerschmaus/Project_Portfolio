@@ -169,6 +169,8 @@ class Game {
 
         })
 
+        this.plants = this.plants.filter(plant => plant.col >= 0);
+
         const now = new Date();
         if(now - this.lastZombieSpawn >= this.zombieSpawnIntervall){
 
@@ -196,8 +198,8 @@ class Game {
 
 class Plant{
 
-    constructor(row,col,type,emoji,color){
-        this.health = 100;
+    constructor(row,col,type,emoji,color,health){
+        this.health = health;
         this.cost = 50;
         this.row = row;
         this.col = col;
@@ -217,7 +219,7 @@ class Plant{
 class Peashooter extends Plant{
 
     constructor(row,col){
-        super(row,col,"peashooter","🔫","darkgreen")
+        super(row,col,"peashooter","🔫","darkgreen",100)
         this.cost = 100;
         this.actionInterval = 800;
         this.lastAction = new Date();
@@ -229,7 +231,7 @@ class Peashooter extends Plant{
 
         if(now - this.lastAction >= this.actionInterval){
 
-            const zombieInLane = game.zombies.some(zombie => zombie.row === this.row && zombie.col > this.col)
+            const zombieInLane = game.zombies.some(zombie => zombie.row === this.row && zombie.col > this.col);
 
             if(zombieInLane){
 
@@ -297,7 +299,7 @@ class Pea{
 class Sunflower extends Plant{
 
 constructor(row, col) {
-        super(row, col, "sunflower", "🌻", "yellow");
+        super(row, col, "sunflower", "🌻", "yellow",50);
         this.cost = 50;
         this.actionInterval = 5000;
         this.lastAction = new Date();
@@ -317,7 +319,7 @@ constructor(row, col) {
 class Wallnut extends Plant{
 
     constructor(row, col) {
-        super(row, col, "wallnut", "🥜", "bisque");
+        super(row, col, "wallnut", "🥜", "bisque",200);
         this.cost = 50;
     }
 
@@ -326,7 +328,7 @@ class Wallnut extends Plant{
 class Cherry extends Plant{
 
     constructor(row, col) {
-        super(row, col, "cherry", "🍒", "crimson");
+        super(row, col, "cherry", "🍒", "crimson",1000);
         this.cost = 150;
     }
 
@@ -335,7 +337,7 @@ class Cherry extends Plant{
 class Potato extends Plant{
 
     constructor(row, col) {
-        super(row, col, "potato", "🥔", "darkgoldenrod");
+        super(row, col, "potato", "🥔", "darkgoldenrod",75);
         this.cost = 150;
     }
 
@@ -348,9 +350,11 @@ class Zombie{
         this.col = col;
         this.health = 50;
         this.speed = 0.05;
+        this.damage = 25;
         this.lastSpawn = new Date();
         this.spawnTime = 100;
         this.movementAccumulator = 0;
+        this.movementAccumulatorBefore = 0;
         this.element = document.createElement('div');
         this.element.classList.add('zombie');
         this.element.textContent = "🧟";
@@ -383,6 +387,25 @@ class Zombie{
         
         if(this.health <= 0){
             this.element.remove();
+        }
+
+        const plantToEat = game.plants.find(plant => plant.row === this.row && Math.abs(plant.col - this.col) < 1);
+
+        if(plantToEat){
+
+            this.movementAccumulatorBefore = this.movementAccumulator;
+            this.movementAccumulator = 0;
+            plantToEat.health -= this.damage;
+
+            if(plantToEat.health <= 0){
+    
+                this.movementAccumulator = this.movementAccumulatorBefore;
+                this.movementAccumulatorBefore = 0;
+                plantToEat.element.remove();
+                plantToEat.col = -1;
+    
+            }
+            
         }
 
     }
