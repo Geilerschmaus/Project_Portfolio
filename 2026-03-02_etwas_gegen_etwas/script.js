@@ -9,6 +9,8 @@ class Game {
         this.zombies = [];
         this.lastZombieSpawn = new Date();
         this.zombieSpawnIntervall = 3000;
+        this.losingBool = false;
+        this.winningBool = false;
         this.projectiles = [];
         this.removeMode = false; 
         
@@ -162,7 +164,40 @@ class Game {
         });
     }
 
+    checkForWinOrLose(){
+        if(this.winningBool){
+            alert("You have won!")
+            return;
+        }
+        else if(!document.querySelector(".game-over-overlay")){
+
+            if(this.losingBool){
+                
+                const gameOverOverlay = document.createElement("div");
+                gameOverOverlay.classList.add("game-over-overlay");
+                gameOverOverlay.innerHTML = 
+                `<h1>Zombies in your house<h1>
+                <p>click button to reload the website and restart the game<p>`
+    
+                const restartButton = document.createElement("button");
+                restartButton.textContent = "Reload to Restart";
+                restartButton.onclick = () => location.reload();
+    
+                gameOverOverlay.appendChild(restartButton);
+                document.body.appendChild(gameOverOverlay);
+    
+            }
+        }
+    }
+
     gameLoop(){
+
+        if(this.winningBool || this.losingBool){
+
+            this.checkForWinOrLose();
+            return;
+        }
+
         this.plants.forEach(plant => {
 
             plant.tick(this);
@@ -190,7 +225,7 @@ class Game {
             zombie.tick(this);
         })
 
-         this.zombies = this.zombies.filter(zombie => zombie.col >= 0 && zombie.health > 0);
+        this.zombies = this.zombies.filter(zombie => zombie.col >= 0 && zombie.health > 0);
 
 
     }
@@ -377,6 +412,7 @@ class Zombie{
 
             if(this.col < 0){
                 this.element.remove();
+                game.losingBool = true;
             }
             else{
 
