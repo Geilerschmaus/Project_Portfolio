@@ -461,6 +461,63 @@ class Cherry extends Plant{
     constructor(row, col) {
         super(row, col, "cherry", "🍒", "crimson",1000);
         this.cost = 150;
+        this.hasExploded = false;
+        this.timeWhenPlaced = new Date();
+        this.explosionInterval = 500;
+    }
+
+    tick(game){
+
+        const now = new Date();
+
+        if(this.hasExploded){
+            return;
+        }
+        
+        else if(now - this.timeWhenPlaced >= this.explosionInterval){
+            this.explode(game);
+        }
+    }
+
+    explode(game){
+        this.hasExploded = true;
+
+        for(let row = this.row - 1; row <= this.row + 1; row++ ){
+
+            for(let col = this.col - 1;col <= this.col +1;col++ ){
+
+                if(row >= 0 && row <= 4 && col >= 0 && col <= 8){
+
+                    const existingExplosion = game.cells[row][col].querySelector(".cherry-explosion");
+                    if(!existingExplosion){
+
+                        const explosion = document.createElement("div");
+                        explosion.classList.add("cherry-explosion");
+                        explosion.textContent = "💥";
+                        game.cells[row][col].appendChild(explosion);
+    
+                        setTimeout( () => explosion.remove(), 500);
+                    }
+
+                }
+
+            }
+        }
+
+        game.zombies.forEach( zombie => {
+
+            const inRange = Math.abs(zombie.row - this.row) <= 1 && Math.abs(zombie.col - this.col) <= 1;
+
+            if(inRange){
+
+                zombie.health = 0;
+                zombie.element.remove();
+            }
+        })
+
+        this.element.remove();
+        this.col = -1;
+        
     }
 
 }
