@@ -8,7 +8,12 @@ class Game {
         this.plants = []; 
         this.zombies = [];
         this.lastZombieSpawn = new Date();
-        this.zombieSpawnIntervall = 3000;
+        this.zombieSpawnInterval = 3000;
+        this.waveSpawnInterval = 30000;
+        this.waveDuration = 45000;
+        this.isWave = false;
+        this.lastWaveSpawn = new Date();
+        this.waveCounter = 0;
         this.losingBool = false;
         this.winningBool = false;
         this.projectiles = [];
@@ -190,6 +195,64 @@ class Game {
         }
     }
 
+    zombieWaveGenerator(){
+
+        const now = new Date();
+
+        if(this.isWave){
+
+            if(now - this.lastWaveSpawn >= this.waveDuration){
+
+                this.isWave = false;
+                this.lastWaveSpawn = now;
+                this.zombieSpawnInterval = this.zombieSpawnInterval * 2;
+                alert("Wave end");
+                console.log("wave end" + now);
+
+            }
+
+            return;
+
+        }
+
+        else{
+
+            if(now - this.lastWaveSpawn >= this.waveSpawnInterval){
+                
+                this.isWave = true;
+                this.lastWaveSpawn = now;
+                this.zombieSpawnInterval = this.zombieSpawnInterval / 2;
+
+                this.waveCounter++;
+
+                alert("wave begin");
+                console.log("wave begin" + now);
+            }
+
+        }
+
+
+
+    }
+
+    getAvailableZombieTypes(){
+
+        if(this.waveCounter <= 1){
+            return ["basic"];
+        }
+        else if(this.waveCounter <= 2){
+            return ["basic","cone"];
+        }
+        else if(this.waveCounter <= 3){
+            return ["basic","cone","bucket","fast"];
+        }
+        else if(this.waveCounter >= 4){
+            return ["basic","cone","bucket","fast","flying"];
+        }
+        
+
+    }
+
     gameLoop(){
 
         if(this.winningBool || this.losingBool){
@@ -197,6 +260,8 @@ class Game {
             this.checkForWinOrLose();
             return;
         }
+
+        this.zombieWaveGenerator();
 
         this.plants.forEach(plant => {
 
@@ -207,7 +272,7 @@ class Game {
         this.plants = this.plants.filter(plant => plant.col >= 0);
 
         const now = new Date();
-        if(now - this.lastZombieSpawn >= this.zombieSpawnIntervall){
+        if(now - this.lastZombieSpawn >= this.zombieSpawnInterval){
 
             Zombie.spawnZombie(this);
             this.lastZombieSpawn = now;
@@ -380,11 +445,11 @@ class Potato extends Plant{
 
 class Zombie{
 
-    constructor(row,col){
+    constructor(row,col,health,speed,emoji){
         this.row = row;
         this.col = col;
-        this.health = 50;
-        this.speed = 0.05;
+        this.health = health;
+        this.speed = speed;
         this.damage = 2.5;
         this.lastSpawn = new Date();
         this.spawnTime = 100;
@@ -392,14 +457,32 @@ class Zombie{
         this.movementAccumulatorBefore = 0;
         this.element = document.createElement('div');
         this.element.classList.add('zombie');
-        this.element.textContent = "🧟";
+        this.element.textContent = emoji;
     }
     
     static spawnZombie(game){
+
+        const types = game.getAvailableZombieTypes();
+        const randomType = types[Math.floor(Math.random() * types.length)];
         const row = Math.trunc(Math.random() * game.rows);
-        const zombie = new Zombie(row,8)
+        let col = 8;
+        if(types === 'flying'){
+            col = Math.floor(Math.random() * (8 - 4 + 1) + 2);
+        }
+        
+        let zombie;
+
+        switch(randomType){
+            case 'basic' : zombie = new BasicZombie(row,col,game); break;
+            case 'cone' : zombie = new ConeZombie(row,col,game); break;
+            case 'bucket' : zombie = new BucketZombie(row,col,game); break;
+            case 'flying' : zombie = new FlyingZombie(row,col,game); break;
+            case 'fast' : zombie = new FastZombie(row,col,game); break;
+            default : zombie = new BasicZombie(row,col,game); break;
+        }
+
         game.zombies.push(zombie);
-        game.cells[row][8].appendChild(zombie.element);
+        game.cells[row][col].appendChild(zombie.element);
     }
 
     tick(game){
@@ -425,7 +508,7 @@ class Zombie{
             this.element.remove();
         }
 
-        const plantToEat = game.plants.find(plant => plant.row === this.row &&  Math.abs(this.col - (plant.col + 1)) < 0.5);
+        const plantToEat = game.plants.find(plant => plant.row === this.row &&  (Math.abs(this.col - (plant.col + 1)) < 0.5 || Math.abs(this.col - plant.col) < 0.5));
 
         if(plantToEat){
 
@@ -446,6 +529,36 @@ class Zombie{
 
     }
 
+}
+
+class BasicZombie extends Zombie {
+
+    constructor(row,col,game) { 
+        super(row,col, 50, 0.05, "🧟"); } 
+}
+
+class ConeZombie extends Zombie {
+
+    constructor(row,col,game) { 
+        super(row,col, 100, 0.05, "🧟🗼"); } 
+}
+
+class BucketZombie extends Zombie {
+
+    constructor(row,col,game) { 
+        super(row,col, 200, 0.05, "🧟🪣"); } 
+}
+
+class FlyingZombie extends Zombie {
+
+    constructor(row,col,game) { 
+        super(row,col, 30, 0.10, "🧟🪽"); } 
+}
+
+class FastZombie extends Zombie {
+
+    constructor(row,col,game) {
+        super(row,col, 30, 0.15, "🧟👟"); } 
 }
 
 document.addEventListener('DOMContentLoaded', () => {
