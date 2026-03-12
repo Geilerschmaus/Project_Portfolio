@@ -188,7 +188,7 @@ class Game {
                 document.body.appendChild(gameWonOverlay);
             }
         }
-        else if(!document.querySelector(".game-over-overlay")){
+        if(!document.querySelector(".game-over-overlay")){
 
             if(this.losingBool){
                 
