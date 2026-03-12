@@ -170,9 +170,23 @@ class Game {
     }
 
     checkForWinOrLose(){
-        if(this.winningBool){
-            alert("You have won!")
-            return;
+        if(!document.querySelector(".game-won-overlay")){
+
+            if(this.winningBool){
+
+                const gameWonOverlay = document.createElement("div");
+                gameWonOverlay.classList.add("game-won-overlay");
+                gameWonOverlay.innerHTML = 
+                `<h1>You have Won!<h1>
+                <p>click button to reload the website and restart the game<p>`
+    
+                const restartButton = document.createElement("button");
+                restartButton.textContent = "Reload to Restart";
+                restartButton.onclick = () => location.reload();
+    
+                gameWonOverlay.appendChild(restartButton);
+                document.body.appendChild(gameWonOverlay);
+            }
         }
         else if(!document.querySelector(".game-over-overlay")){
 
@@ -208,6 +222,10 @@ class Game {
                 this.zombieSpawnInterval = this.zombieSpawnInterval * 2;
                 alert("Wave end");
                 console.log("wave end" + now);
+
+                if(this.waveCounter >= 6){
+                    this.winningBool = true;
+                }
 
             }
 
@@ -253,6 +271,16 @@ class Game {
 
     }
 
+    updateNextWaveText(){
+
+        const now = new Date();
+        const timePassed = now -this.lastWaveSpawn;
+        const timeRemaining = Math.ceil((this.waveSpawnInterval - timePassed) / 1000);
+
+        const counter = document.getElementById("counter-update");
+        counter.textContent = timeRemaining
+    }
+
     gameLoop(){
 
         if(this.winningBool || this.losingBool){
@@ -260,6 +288,8 @@ class Game {
             this.checkForWinOrLose();
             return;
         }
+
+        this.updateNextWaveText();
 
         this.zombieWaveGenerator();
 
@@ -272,6 +302,7 @@ class Game {
         this.plants = this.plants.filter(plant => plant.col >= 0);
 
         const now = new Date();
+
         if(now - this.lastZombieSpawn >= this.zombieSpawnInterval){
 
             Zombie.spawnZombie(this);
