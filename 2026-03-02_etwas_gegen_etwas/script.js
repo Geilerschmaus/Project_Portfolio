@@ -234,7 +234,6 @@ class Game {
                 this.isWave = false;
                 this.lastWaveSpawn = now;
                 this.zombieSpawnInterval = this.zombieSpawnInterval * 2;
-                alert("Wave end");
                 console.log("wave end" + now);
 
                 if(this.waveCounter >= 6){
@@ -257,7 +256,6 @@ class Game {
 
                 this.waveCounter++;
 
-                alert("wave begin");
                 console.log("wave begin" + now);
             }
 
@@ -287,12 +285,22 @@ class Game {
 
     updateNextWaveText(){
 
-        const now = new Date();
-        const timePassed = now -this.lastWaveSpawn;
-        const timeRemaining = Math.ceil((this.waveSpawnInterval - timePassed) / 1000);
-
         const counter = document.getElementById("counter-update");
-        counter.textContent = timeRemaining
+
+        if(this.isWave){
+            counter.textContent = "Wave Counter: " + this.waveCounter;
+        }
+        else{
+            
+            const now = new Date();
+            const timePassed = now -this.lastWaveSpawn;
+            const timeRemaining = Math.ceil((this.waveSpawnInterval - timePassed) / 1000);
+            
+            
+            counter.textContent = "Next Wave in: " + timeRemaining
+
+        }
+
     }
 
     gameLoop(){
