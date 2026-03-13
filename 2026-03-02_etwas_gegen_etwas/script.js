@@ -453,14 +453,35 @@ constructor(row, col) {
     }
 
     tick(game){
+
         const now = new Date();
+
         if(now - this.lastAction >= this.actionInterval){
-            game.sun += 25;
-            game.updateSunDisplay();
+
+            this.createSunDiv(game);
             this.lastAction = now;
         }
     }
 
+    createSunDiv(game){
+
+        function addSun(event,game,sunElementToDelete){
+            event.stopPropagation();
+            game.sun += 25;
+            sunElementToDelete.remove();
+            game.updateSunDisplay();
+        }
+
+        const randomRow = Math.floor(Math.random() * 5);
+        const randomCol = Math.floor(Math.random() * 9);
+        
+        const sun = document.createElement("div");
+        sun.classList.add("sun");
+        sun.textContent = "☀️";
+        sun.onmouseover = (event) => addSun(event,game,sun);
+        game.cells[randomRow][randomCol].appendChild(sun);
+    }
+    
 }
 
 class Wallnut extends Plant{
@@ -468,6 +489,16 @@ class Wallnut extends Plant{
     constructor(row, col) {
         super(row, col, "wallnut", "🥜", "bisque",200);
         this.cost = 50;
+    }
+
+    tick(){
+        if(this.health <= 150){
+            this.element.textContent = "🥜⚡️";
+        }
+        if(this.health <= 50){
+            this.element.textContent = "⚡️🥜⚡️"
+        }
+
     }
 
 }
