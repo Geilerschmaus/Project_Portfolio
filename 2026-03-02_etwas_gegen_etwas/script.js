@@ -16,6 +16,8 @@ class Game {
         this.waveCounter = 0;
         this.losingBool = false;
         this.winningBool = false;
+        this.lastSunReplenishment = new Date();
+        this.sunReplenishmentInterval = 4000;
         this.projectiles = [];
         this.removeMode = false; 
         
@@ -132,6 +134,18 @@ class Game {
             plant.element.remove();
             this.plants.splice(plantPlace,1);
 
+        }
+
+    }
+
+    automaticSunReplenishment(){
+
+        const now = new Date();
+
+        if(now - this.lastSunReplenishment >= this.sunReplenishmentInterval){
+            this.sun += 50;
+            this.updateSunDisplay();
+            this.lastSunReplenishment = now;
         }
 
     }
@@ -288,6 +302,8 @@ class Game {
             this.checkForWinOrLose();
             return;
         }
+
+        this.automaticSunReplenishment();
 
         this.updateNextWaveText();
 
