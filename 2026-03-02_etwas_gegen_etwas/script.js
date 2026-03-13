@@ -488,11 +488,11 @@ class Cherry extends Plant{
 
                 if(row >= 0 && row <= 4 && col >= 0 && col <= 8){
 
-                    const existingExplosion = game.cells[row][col].querySelector(".cherry-explosion");
+                    const existingExplosion = game.cells[row][col].querySelector(".explosion");
                     if(!existingExplosion){
 
                         const explosion = document.createElement("div");
-                        explosion.classList.add("cherry-explosion");
+                        explosion.classList.add("explosion");
                         explosion.textContent = "💥";
                         game.cells[row][col].appendChild(explosion);
     
@@ -526,7 +526,70 @@ class Potato extends Plant{
 
     constructor(row, col) {
         super(row, col, "potato", "🥔", "darkgoldenrod",75);
-        this.cost = 150;
+        this.cost = 50;
+        this.whenPlaced = new Date();
+        this.whenArmedInterval = 5000;
+        this.isArmed = false;
+        this.hasExploded = false;
+    }
+
+    tick(game){
+
+        const now = new Date();
+
+        if(!this.isArmed && now - this.whenPlaced >= this.whenArmedInterval){
+
+            this.isArmed = true;
+
+        }
+        else if(this.isArmed && !this.hasExploded){
+
+            const zombieInfront = game.zombies.some(zombie => {
+                return zombie.row === this.row && (zombie.col === this.col + 1 || zombie.col === this.col);
+            })
+
+            if(zombieInfront){
+
+                this.explode(game);
+            }
+
+
+        }
+
+
+    }
+
+    explode(game){
+
+        if(!this.hasExploded){
+
+            this.hasExploded = true;
+    
+            const explosion = document.createElement("div");
+            explosion.classList.add("explosion");
+            explosion.textContent = "💥";
+            game.cells[this.row][this.col].appendChild(explosion);
+
+            setTimeout( () => explosion.remove(), 500);
+    
+            game.zombies.forEach(zombie => {
+
+                const inRange = Math.abs(zombie.col - this.col) <= 1 && ((zombie.row - this.row) === 0);
+    
+                console.log(inRange);
+                if(inRange){
+                    zombie.element.remove();
+                    zombie.health = 0;
+                }
+    
+    
+            })
+    
+            this.element.remove();
+            this.col = -1;
+        }
+
+
     }
 
 }
