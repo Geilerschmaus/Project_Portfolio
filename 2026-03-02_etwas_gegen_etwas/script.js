@@ -353,6 +353,7 @@ class Plant{
         this.type = type;
         this.element = document.createElement('div');
         this.element.classList.add('plant');
+        this.element.dataset.type = type;
         this.element.textContent = emoji;
         this.element.style.backgroundColor = color;
     }
@@ -489,16 +490,16 @@ class Wallnut extends Plant{
     constructor(row, col) {
         super(row, col, "wallnut", "🥜", "bisque",200);
         this.cost = 50;
+        this.element.dataset.state = 'full';
     }
 
     tick(){
-        if(this.health <= 150){
-            this.element.textContent = "🥜⚡️";
+        if(this.health <= 150 && this.element.dataset.state === 'full'){
+            this.element.dataset.state = 'damaged';
         }
-        if(this.health <= 50){
-            this.element.textContent = "⚡️🥜⚡️"
+        if(this.health <= 50 && this.element.dataset.state === 'damaged'){
+            this.element.dataset.state = 'critical';
         }
-
     }
 
 }
@@ -655,6 +656,7 @@ class Zombie{
         this.movementAccumulatorBefore = 0;
         this.element = document.createElement('div');
         this.element.classList.add('zombie');
+        this.element.dataset.type = 'basic';
         this.element.textContent = emoji;
     }
     
@@ -732,31 +734,41 @@ class Zombie{
 class BasicZombie extends Zombie {
 
     constructor(row,col,game) { 
-        super(row,col, 50, 0.05, "🧟"); } 
+        super(row,col, 50, 0.05, "🧟"); 
+        this.element.dataset.type = 'basic';
+    } 
 }
 
 class ConeZombie extends Zombie {
 
     constructor(row,col,game) { 
-        super(row,col, 100, 0.05, "🧟🗼"); } 
+        super(row,col, 100, 0.05, "🧟🗼"); 
+        this.element.dataset.type = 'cone';
+    } 
 }
 
 class BucketZombie extends Zombie {
 
     constructor(row,col,game) { 
-        super(row,col, 200, 0.05, "🧟🪣"); } 
+        super(row,col, 200, 0.05, "🧟🪣"); 
+        this.element.dataset.type = 'bucket';
+    } 
 }
 
 class FlyingZombie extends Zombie {
 
     constructor(row,col,game) { 
-        super(row,col, 30, 0.10, "🧟🪽"); } 
+        super(row,col, 30, 0.10, "🧟🪽"); 
+        this.element.dataset.type = 'flying';
+    } 
 }
 
 class FastZombie extends Zombie {
 
     constructor(row,col,game) {
-        super(row,col, 30, 0.15, "🧟👟"); } 
+        super(row,col, 30, 0.15, "🧟👟");
+        this.element.dataset.type = 'fast';
+    } 
 }
 
 document.addEventListener('DOMContentLoaded', () => {
