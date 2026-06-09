@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import _React, { useState } from 'react';
 
 interface TaskInputProps {
   onAddTask: (newText: string) => void;
@@ -22,7 +22,7 @@ function Taskcreator({ onAddTask }: TaskInputProps) {
         value={inputValue} 
         onChange={(e) => setInputValue(e.target.value)} 
       />
-      <button onClick={handleAddClick}>Add Task</button>
+      <button type="button" onClick={handleAddClick}>Add Task</button>
     </div>
   );
 }

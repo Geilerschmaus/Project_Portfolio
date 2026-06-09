@@ -1,5 +1,5 @@
-import React from 'react';
-import TaskItem from './Task.tsx';
+import _React from 'react';
+import Task from './Task.tsx';
 
 interface TaskListProps {
   tasks: string[];
@@ -10,8 +10,8 @@ function TaskList({ tasks, onDeleteTask }: TaskListProps) {
   return (
     <ul className="task-list">
       {tasks.map((task, index) => (
-        <TaskItem 
-          key={index} 
+        <Task 
+          index={index} 
           taskName={task} 
           onDelete={onDeleteTask} 
         />

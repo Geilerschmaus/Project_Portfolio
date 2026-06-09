@@ -1,15 +1,16 @@
-import React from 'react';
 
-interface TaskItemProps {
+
+interface TaskProps {
   taskName: string;
   onDelete: (id: number) => void;
+  index: number;
 }
 
-function TaskItem({ taskName, onDelete }: TaskItemProps) {
+function TaskItem({ taskName, onDelete, index }: TaskProps) {
   return (
     <li className="task-item">
       <span>{taskName}</span>
-      <button onClick={() => onDelete(Date.now())}>Delete</button>
+      <button type="button" onClick={() => onDelete(index)}>Delete</button>
     </li>
   );
 }

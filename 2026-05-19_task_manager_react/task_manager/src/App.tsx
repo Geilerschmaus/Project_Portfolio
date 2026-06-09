@@ -1,7 +1,7 @@
-import React, { useState } from 'react';
-import HeaderMainScreen from "./components/Header";
-import Taskcreator from "./components/Taskcreator";
-import TaskList from "./components/TaskList";
+import _React, { useState } from 'react';
+import HeaderMainScreen from "./components/Header.tsx";
+import Taskcreator from "./components/Taskcreator.tsx";
+import TaskList from "./components/TaskList.tsx";
 
 function App() {
   const [tasks, setTasks] = useState<string[]>([]);
