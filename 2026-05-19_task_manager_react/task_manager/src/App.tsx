@@ -1,7 +1,10 @@
 import _React, { useState } from 'react';
 import HeaderMainScreen from "./components/Header.tsx";
+import FooterMainScreen from "./components/Footer.tsx";
+import Mainsection from "./components/Mainsection.tsx";
 import Taskcreator from "./components/Taskcreator.tsx";
 import TaskList from "./components/TaskList.tsx";
+import "./App.css";
 
 function App() {
   const [tasks, setTasks] = useState<string[]>([]);
@@ -18,8 +21,12 @@ function App() {
   return (
     <div className="App">
       <HeaderMainScreen />
-      <Taskcreator onAddTask={addTaskToList} />
-      <TaskList tasks={tasks} onDeleteTask={deleteTask} />
+      <Mainsection>
+
+        <Taskcreator onAddTask={addTaskToList} />
+        <TaskList tasks={tasks} onDeleteTask={deleteTask} />
+      </Mainsection>
+      <FooterMainScreen />
     </div>
   );
 }

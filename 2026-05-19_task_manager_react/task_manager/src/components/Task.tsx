@@ -9,8 +9,10 @@ interface TaskProps {
 function TaskItem({ taskName, onDelete, index }: TaskProps) {
   return (
     <li className="task-item">
-      <span>{taskName}</span>
+      <span style={{ color: 'white' }}>{taskName}</span>
       <button type="button" onClick={() => onDelete(index)}>Delete</button>
+      <button type="button" onClick = {() => {}}>Complete</button>
+      
     </li>
   );
 }

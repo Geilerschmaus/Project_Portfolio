@@ -32,6 +32,16 @@ body {
     
 }
 
+.main-section-main-screen {
+    width: 100%;
+    height: 70%;
+    background-color: #39404e;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
+
 .github-link-text {
     font-size: large;
     font-family: 'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif;
