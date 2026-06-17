@@ -1,19 +1,23 @@
-import _React from 'react';
 import Task from './Task.tsx';
 
 interface TaskListProps {
-  tasks: string[];
+  tasks: { taskName: string; taskDone: boolean }[];
   onDeleteTask: (id: number) => void;
+  onChangeCompletionStatus: (id:number) => void;
+
 }
 
-function TaskList({ tasks, onDeleteTask }: TaskListProps) {
+function TaskList({ tasks, onDeleteTask, onChangeCompletionStatus,}: TaskListProps) {
   return (
     <ul className="task-list">
       {tasks.map((task, index) => (
         <Task 
           index={index} 
-          taskName={task} 
+          taskName={task.taskName} 
+          taskDone={task.taskDone}
           onDelete={onDeleteTask} 
+          onChangeCompletionStatus={onChangeCompletionStatus}
+
         />
       ))}
     </ul>

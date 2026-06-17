@@ -1,18 +1,33 @@
 
 
 interface TaskProps {
+
   taskName: string;
-  onDelete: (id: number) => void;
+  taskDone: boolean;
   index: number;
+  onDelete: (id: number) => void;
+  onChangeCompletionStatus: (id:number) => void;
+
 }
 
-function TaskItem({ taskName, onDelete, index }: TaskProps) {
+function TaskItem({ taskName,taskDone, onDelete, onChangeCompletionStatus, index }: TaskProps) {
+
+  const changeStyleIfCompleted = () => {
+
+    if(taskDone) {
+      return {textDecoration: 'line-through', color: 'gray'};
+    }
+    else {
+      return {textDecoration: 'none', color: 'white'};
+    }
+  }
+
   return (
     <li className="task-item">
-      <span style={{ color: 'white' }}>{taskName}</span>
+      <span style={changeStyleIfCompleted()}>{taskName}</span>
       <button type="button" onClick={() => onDelete(index)}>Delete</button>
-      <button type="button" onClick = {() => {}}>Complete</button>
-      
+      <button type="button" onClick = {() => onChangeCompletionStatus(index)}>Complete</button>
+
     </li>
   );
 }
