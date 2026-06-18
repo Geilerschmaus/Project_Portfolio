@@ -4,10 +4,11 @@ interface TaskListProps {
   tasks: { taskName: string; taskDone: boolean }[];
   onDeleteTask: (id: number) => void;
   onChangeCompletionStatus: (id:number) => void;
+  onEditTaskName: (id: number, newTaskName: string) => void;
 
 }
 
-function TaskList({ tasks, onDeleteTask, onChangeCompletionStatus,}: TaskListProps) {
+function TaskList({ tasks, onDeleteTask, onChangeCompletionStatus, onEditTaskName}: TaskListProps) {
   return (
     <ul className="task-list">
       {tasks.map((task, index) => (
@@ -17,6 +18,7 @@ function TaskList({ tasks, onDeleteTask, onChangeCompletionStatus,}: TaskListPro
           taskDone={task.taskDone}
           onDelete={onDeleteTask} 
           onChangeCompletionStatus={onChangeCompletionStatus}
+          onEditTaskName={onEditTaskName}
 
         />
       ))}

@@ -5,6 +5,7 @@ import Mainsection from "./components/Mainsection.tsx";
 import Taskcreator from "./components/Taskcreator.tsx";
 import TaskList from "./components/TaskList.tsx";
 import SelectFilter from "./components/FilterSelecter.tsx";
+import FilteredTasksCount from "./components/TaskCounter.tsx"
 import "./App.css";
 
 interface Task {
@@ -46,14 +47,18 @@ function App() {
     return true;
   });
 
+  const editTaskName = (idToChange: number) => {
+    
+  }
   return (
     <div className="App">
       <HeaderMainScreen />
       <Mainsection>
 
         <SelectFilter filterType={filterType} setFilterType={setFilterType} />
+        <FilteredTasksCount tasks={tasks} filterType={filterType} />
         <Taskcreator onAddTask={addTaskToList} />
-        <TaskList tasks={filteredTasks} onDeleteTask={deleteTask} onChangeCompletionStatus={onChangeCompletionStatus} />
+        <TaskList tasks={filteredTasks} onDeleteTask={deleteTask} onChangeCompletionStatus={onChangeCompletionStatus} onEditTaskName={editTaskName} />
       </Mainsection>
       <FooterMainScreen />
     </div>
