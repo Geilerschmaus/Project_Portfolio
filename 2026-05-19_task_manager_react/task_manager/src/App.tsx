@@ -1,4 +1,4 @@
-import _React, { useState } from 'react';
+import { useState , useEffect} from 'react';
 import HeaderMainScreen from "./components/Header.tsx";
 import FooterMainScreen from "./components/Footer.tsx";
 import Mainsection from "./components/Mainsection.tsx";
@@ -14,9 +14,17 @@ interface Task {
 }
 
 function App() {
-  const [tasks, setTasks] = useState<Task[]>([]);
+  const [tasks, setTasks] = useState<Task[]>(() => {
+    const saved = localStorage.getItem("tasks");
+    return(saved ? JSON.parse(saved): []);
+  });
 
   const [filterType, setFilterType] = useState<"all" | "active" | "completed">("all");
+
+  useEffect( 
+    () => {localStorage.setItem("tasks", JSON.stringify(tasks))},
+    [tasks]
+  )
 
   const addTaskToList = (newText: string) => {
     setTasks([...tasks, { taskName: newText, taskDone: false }]);
@@ -47,9 +55,18 @@ function App() {
     return true;
   });
 
-  const editTaskName = (idToChange: number) => {
-    
+  const editTaskName = (idToChange: number, newTaskName: string) => {
+      setTasks(tasks.map((task, index) => {
+        if(index === idToChange){
+
+          return { ...task, taskName: newTaskName};
+        }
+        else{
+          return task
+        }
+      }))
   }
+  
   return (
     <div className="App">
       <HeaderMainScreen />

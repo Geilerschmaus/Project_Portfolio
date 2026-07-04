@@ -28,12 +28,37 @@ function TaskItem({ taskName, taskDone, index, onDelete, onEditTaskName, onChang
     }
   }
 
+  const changeButtonWhileEditing = () => {
+
+    if(editingMode){
+      return(
+        "Save"
+      );
+    }
+    else if(!editingMode){
+      return(
+        "Edit"
+      );
+    }
+  }
+
+  const switchEditingModeOnClick = () => {
+
+    if(editingMode){
+      changeEditingMode(false);
+    }
+    else if(!editingMode){
+      changeEditingMode(true);
+    }
+  }
+ 
   return (
     <li className="task-item">
+      {editingMode ? (<input type="text" placeholder="Enter new Name.." value={newTaskName} onChange={(input) => changeTaskName(input.target.value)}/>) : null}
       <span style={changeStyleIfCompleted()}>{taskName}</span>
       <button type="button" onClick={() => onDelete(index)}>Delete</button>
       <button type="button" onClick = {() => onChangeCompletionStatus(index)}>Complete</button>
-      <button type="button" onClick={() => onEditTaskName(index)}>Edit</button>
+      <button type="button" onClick={() => {onEditTaskName(index,newTaskName); switchEditingModeOnClick()}}>{changeButtonWhileEditing()}</button>
 
     </li>
   );
