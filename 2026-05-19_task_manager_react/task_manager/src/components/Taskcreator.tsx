@@ -1,4 +1,4 @@
-import _React, { useState } from 'react';
+import { useState } from 'react';
 
 interface TaskInputProps {
   onAddTask: (newText: string) => void;

@@ -66,6 +66,16 @@ function App() {
         }
       }))
   }
+
+  const reorderTasks = (indexMovedFrom : number, indexMovedTo : number) => {
+
+    const tasksArrayCopy = [...tasks];
+    const taskToMove = tasksArrayCopy.splice(indexMovedFrom,1)[0];
+    tasksArrayCopy.splice(indexMovedTo, 0, taskToMove);
+
+    setTasks(tasksArrayCopy);
+
+  }
   
   return (
     <div className="App">
@@ -75,7 +85,7 @@ function App() {
         <SelectFilter filterType={filterType} setFilterType={setFilterType} />
         <FilteredTasksCount tasks={tasks} filterType={filterType} />
         <Taskcreator onAddTask={addTaskToList} />
-        <TaskList tasks={filteredTasks} onDeleteTask={deleteTask} onChangeCompletionStatus={onChangeCompletionStatus} onEditTaskName={editTaskName} />
+        <TaskList tasks={filteredTasks} onDeleteTask={deleteTask} onChangeCompletionStatus={onChangeCompletionStatus} onEditTaskName={editTaskName} onReorderTasks={reorderTasks}/>
       </Mainsection>
       <FooterMainScreen />
     </div>

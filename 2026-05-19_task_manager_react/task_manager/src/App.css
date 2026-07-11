@@ -48,3 +48,11 @@ body {
     color: white;
     text-decoration: none;
 }
+
+.task-item {
+    display: flex;
+    justify-content: center;
+    align-content: space-around;
+    height: 50px;
+    width: 40%;
+}
