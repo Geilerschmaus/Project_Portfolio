@@ -1,23 +1,32 @@
 # TIKI TIKI - TikTok Clone Documentation
 
-**Date:** 2026-07-12
-**Tech Stack:** React 19 + TypeScript + Vite 8
+**Last Updated:** 2026-07-12
+**Tech Stack:** React 19 + TypeScript + Vite 8 + lucide-react
 
 ---
 
 ## Current Status
 
-Fresh React 19 + TypeScript + Vite project scaffold. Empty App component, no features implemented yet.
+Phase 1 in progress. Types defined, mock data created, 2 of 4 components built.
 
 **Project Structure:**
 ```
 src/
-├── App.tsx          (empty shell)
-├── App.css          (base reset styles)
-├── main.tsx         (React root mount)
-├── main.css         (empty)
-├── components/      (empty - to be built)
-└── assets/          (empty - for media)
+├── types.ts                    (Video interface - 16 fields)
+├── App.tsx                     (empty shell - not wired yet)
+├── App.css                     (base reset styles)
+├── main.tsx                    (React root mount)
+├── main.css                    (empty)
+├── components/
+│   ├── VideoInfo.tsx           displays username, caption, music
+│   └── ActionBar.tsx           basic structure, needs icons + handlers
+├── assets/
+│   ├── data/
+│   │   └── mockVideos.ts      3 mock videos
+│   └── videos/
+│       ├── video1.mp4
+│       ├── video2.mp4
+│       └── video3.mp4
 ```
 
 ---
@@ -32,15 +41,19 @@ Tiki Tiki is a TikTok-style short-form video feed. Users scroll vertically throu
 
 ### Component Tree
 ```
-App
-├── Layout
-│   ├── Sidebar (desktop nav)
-│   └── BottomNav (mobile nav)
-├── FeedPage
-│   └── VideoPlayer (full-screen swipeable video)
-│       ├── VideoInfo (username, caption, music ticker)
-│       ├── ActionBar (like, comment, share, bookmark buttons)
-│       └── ProgressBar
+App (state: Video[], handlers: handleLike, handleBookmark)
+├── Feed (touch gesture handling, vertical snap)
+│   └── VideoPlayer (full-screen card)
+│       ├── <video> element (plays inline, muted, loop)
+│       ├── VideoInfo (bottom-left overlay)
+│       │   ├── @username
+│       │   ├── caption text
+│       │   └── music ticker (animated)
+│       └── ActionBar (right-side vertical strip)
+│           ├── Heart (like/unlike + count)
+│           ├── MessageCircle (comment count)
+│           ├── Share2 (share count)
+│           └── Bookmark (save/unsaved)
 ├── DiscoverPage
 │   ├── SearchBar
 │   └── TrendingGrid (video thumbnails)
@@ -56,9 +69,10 @@ App
 ```
 
 ### State Management
-- **React Context** for global state (auth, theme, current user)
-- **useState/useReducer** for local component state
+- **useState** in App.tsx for video array (single source of truth)
+- **State lifting** — all data flows down via props
 - **localStorage** for persistence (favorites, theme)
+- **React.memo** for performance optimization on VideoPlayer
 
 ### Routing
 - React Router v7 with lazy-loaded pages
@@ -69,13 +83,13 @@ App
 ## Feature Plan (Phases)
 
 ### Phase 1 - Core Feed (MVP)
-| # | Feature | Complexity |
-|---|---------|-----------|
-| 1 | Full-screen vertical video player with swipe navigation | High |
-| 2 | Video metadata display (username, caption, music) | Low |
-| 3 | Action bar (like, comment, share, bookmark) | Medium |
-| 4 | Mock data store with sample videos | Low |
-| 5 | CSS: dark theme, TikTok-style layout | Medium |
+| # | Feature | Status |
+|---|---------|--------|
+| 1 | Full-screen vertical video player with swipe navigation | Pending |
+| 2 | Video metadata display (username, caption, music) | In Progress |
+| 3 | Action bar (like, comment, share, bookmark) | In Progress |
+| 4 | Mock data store with sample videos | Done |
+| 5 | CSS: dark theme, TikTok-style layout | Pending |
 
 ### Phase 2 - Social Features
 | # | Feature | Complexity |
@@ -105,27 +119,55 @@ App
 
 ---
 
-## Estimated Timeline
+## Phase 1 Progress
 
-| Phase | Est. Time | Status |
-|-------|-----------|--------|
-| Phase 1 - Core Feed | 2-3 hours | Pending |
-| Phase 2 - Social | 2-3 hours | Pending |
-| Phase 3 - Discovery | 2-3 hours | Pending |
-| Phase 4 - Polish | 1-2 hours | Pending |
-| **Total** | **7-11 hours** | |
-
----
-
-## Libraries To Consider Adding
-
-| Library | Purpose |
-|---------|---------|
-| `react-router-dom` | Client-side routing |
-| `framer-motion` | Animations (like heart, page transitions) |
-| `lucide-react` | Icons (like, comment, share, etc.) |
-| `zustand` or React Context | State management |
+| Step | Task | Status |
+|------|------|--------|
+| 1 | Install lucide-react | Pending |
+| 2 | Create types.ts | Done |
+| 3 | Create mockVideos.ts | Done |
+| 4a | Build VideoInfo.tsx | Done |
+| 4b | Build ActionBar.tsx | Partially done (needs icons, handlers, props) |
+| 4c | Build VideoPlayer.tsx | Pending |
+| 4d | Build Feed.tsx | Pending |
+| 5 | Wire up App.tsx (state + handlers) | Pending |
+| 6 | CSS: dark theme, layout, animations | Pending |
+| 7 | Update index.html title | Pending |
+| 8 | Lint + test | Pending |
 
 ---
 
-**Project finished in percentage: 0%**
+## Concepts Learned So Far
+
+- TypeScript interfaces and type exports
+- import type vs import
+- Props interfaces with Props suffix convention
+- Data flow: parent to child via props (single source of truth)
+- Why NOT to duplicate state with useState in child components
+- React.memo for performance with large lists
+- useCallback for memoizing handler functions
+
+---
+
+## Libraries Used
+
+| Library | Purpose | Status |
+|---------|---------|--------|
+| `lucide-react` | Icons (heart, comment, share, bookmark) | Pending install |
+| `react-router-dom` | Client-side routing | Phase 3 |
+| `framer-motion` | Animations | Phase 4 |
+
+---
+
+## Next Steps
+
+1. Install lucide-react
+2. Finish ActionBar.tsx (add icons, handler props, conditional fill/color)
+3. Build VideoPlayer.tsx (full-screen card with video + info + actions)
+4. Build Feed.tsx (scrollable container with touch swipe)
+5. Wire up App.tsx (state management, like/bookmark handlers)
+6. Add CSS (dark theme, TikTok layout, scroll snap, marquee)
+
+---
+
+**Project finished in percentage: ~15%**
